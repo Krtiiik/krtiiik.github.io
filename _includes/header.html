@@ -1,0 +1,21 @@
+<header id="page-header">
+  <h1 class="grid-left">
+    Krtiiik's Homepage
+  </h1>
+
+  <nav class="grid-right">
+    <section>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </section>
+
+    <section>
+      {% for item in site.nav_external %}
+      <a href="{{ item.url }}">
+        {% if item.icon %}<i class="bi {{ item.icon }}"></i>{% endif %}
+        {{ item.title }}
+      </a>
+      {% endfor %}
+    </section>
+  </nav>
+</header>

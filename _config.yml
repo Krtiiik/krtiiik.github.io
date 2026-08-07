@@ -1,0 +1,21 @@
+title: "Krtiiik's Homepage"
+markdown: kramdown
+theme: null
+exclude:
+  - Gemfile
+  - Gemfile.lock
+
+# Navigation
+nav_pages:
+  - title: Home
+    url: /
+  - title: About
+    url: /about
+
+nav_external:
+  - title: Resume
+    url: https://krtiiik.github.io/resume/
+    icon: bi-file-earmark-person-fill
+  - title: Songbook
+    url: https://krtiiik.github.io/songbook
+    icon: bi-file-music-fill
