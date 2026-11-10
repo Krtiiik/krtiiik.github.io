@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- The scene dot. A standalone file can't read the CSS tokens, so --a1 is copied here. -->
+  <!-- The scene switch. A standalone file can't read the CSS tokens, so the a1 accent is copied here
+       (no double hyphens: they are illegal inside XML comments and break the whole file). -->
   <style>
     .dot { fill: #C2521A; }
     @media (prefers-color-scheme: dark) { .dot { fill: #FF8A3D; } }
