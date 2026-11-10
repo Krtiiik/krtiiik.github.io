@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pause button for the background; the choice is remembered.
 - GitHub and LinkedIn icon links next to the résumé button.
 - Page description and Open Graph tags, so shared links get a proper title and summary.
+- Favicon: the orange scene dot, matching the light or dark system theme.
 
 ### Changed
 
