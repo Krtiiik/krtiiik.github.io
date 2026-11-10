@@ -360,7 +360,8 @@ html:not(.js) .controls {
 
 .page {
     align-self: flex-start;
-    margin: 48px 0 88px;
+    /* block margins only: the inline margin belongs to .panel */
+    margin-block: 48px 88px;
 }
 
 .page-title {
@@ -435,6 +436,6 @@ html:not(.js) .controls {
     }
 
     .page {
-        margin: 24px 0 64px;
+        margin-block: 24px 64px;
     }
 }
