@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Single home page as a hub: a large name with an intro panel and a résumé button, plus cards for Resume and Songbook.
 - Animated background with three scenes: DJ hardware, math and an oscilloscope. Each visit starts on a random one, and the pulsing orange dot before the name swoops to the next. The scenes react gently to the pointer and to scrolling, without moving the page content.
 - Pause button for the background; the choice is remembered.
+- GitHub and LinkedIn icon links next to the résumé button.
 
 ### Changed
 

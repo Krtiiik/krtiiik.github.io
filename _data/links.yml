@@ -12,3 +12,12 @@ cards:
     text: "[One line about the songbook]"
     url: https://krtiiik.github.io/songbook
     accent: a2
+
+# Hero icon row: profiles elsewhere. `icon` names a file in _includes/icons/.
+socials:
+  - title: GitHub
+    url: https://github.com/krtiiik
+    icon: github
+  - title: LinkedIn
+    url: https://www.linkedin.com/in/TODO
+    icon: linkedin
