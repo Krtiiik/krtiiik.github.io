@@ -1,7 +1,7 @@
 title: "Krtiiik's Homepage"
-description: "[One sentence about you and this site, shown in search results and link previews.]"
+description: "Personal webpage of Lukáš Nedbálek, Krtiiik."
 # Short phrase after the site title in the home page <title>.
-tagline: "[three to five word tagline]"
+tagline: "Welcome"
 author: Krtiiik
 lang: en
 url: https://krtiiik.github.io
@@ -17,6 +17,3 @@ exclude:
   - Gemfile.lock
   - README.md
   - CHANGELOG.md
-  - CONTEXT.md
-  - ARCHITECTURE.md
-  - CONVENTIONS.md
