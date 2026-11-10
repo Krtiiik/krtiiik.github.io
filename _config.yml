@@ -15,7 +15,5 @@ nav_pages:
 nav_external:
   - title: Resume
     url: https://krtiiik.github.io/resume/
-    icon: bi-file-earmark-person-fill
   - title: Songbook
     url: https://krtiiik.github.io/songbook
-    icon: bi-file-music-fill

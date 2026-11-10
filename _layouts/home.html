@@ -1,0 +1,33 @@
+---
+layout: default
+---
+
+<section class="hero">
+    <div class="panel hero-panel">
+        <h1 class="hero-title">Krtiiik</h1>
+        <p class="hero-intro">{{ page.intro }}</p>
+        {% if page.cta %}
+        <div class="hero-actions">
+            <a class="btn btn-primary" href="{{ page.cta.url | relative_url }}">{{ page.cta.title }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% if page.cards %}
+<section class="cards" aria-label="Pages">
+    {% for card in page.cards %}
+    <a class="card" href="{{ card.url | relative_url }}" style="--accent: var(--{{ card.accent | default: 'a1' }})">
+        <span class="card-kicker">{{ card.kicker }}</span>
+        <span class="card-body">
+            <strong class="card-title">{{ card.title }}</strong>
+            <span class="card-text">{{ card.text }}</span>
+        </span>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}
+
+{{ content }}
