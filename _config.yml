@@ -1,6 +1,17 @@
 title: "Krtiiik's Homepage"
+description: "[One sentence about you and this site, shown in search results and link previews.]"
+# Short phrase after the site title in the home page <title>.
+tagline: "[three to five word tagline]"
+author: Krtiiik
+lang: en
+url: https://krtiiik.github.io
+# Link-preview image (1200×630) for jekyll-seo-tag; add once the design settles.
+# image: /assets/og.png
+
 markdown: kramdown
 theme: null
+plugins:
+  - jekyll-seo-tag
 exclude:
   - Gemfile
   - Gemfile.lock
