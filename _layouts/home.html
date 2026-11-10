@@ -16,9 +16,10 @@ layout: default
     </div>
 </section>
 
-{% if page.cards %}
+{% assign cards = site.data.links.cards %}
+{% if cards %}
 <section class="cards" aria-label="Pages">
-    {% for card in page.cards %}
+    {% for card in cards %}
     <a class="card" href="{{ card.url | relative_url }}" style="--accent: var(--{{ card.accent | default: 'a1' }})">
         <span class="card-kicker">{{ card.kicker }}</span>
         <span class="card-body">
