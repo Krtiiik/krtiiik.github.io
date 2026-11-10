@@ -4,16 +4,3 @@ theme: null
 exclude:
   - Gemfile
   - Gemfile.lock
-
-# Navigation
-nav_pages:
-  - title: Home
-    url: /
-  - title: About
-    url: /about
-
-nav_external:
-  - title: Resume
-    url: https://krtiiik.github.io/resume/
-  - title: Songbook
-    url: https://krtiiik.github.io/songbook
