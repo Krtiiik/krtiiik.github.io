@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - New look: orange, cyan and blue on navy-black or warm paper, with Unbounded, Inter Tight and DM Mono type.
+- Fonts are served from this site instead of Google Fonts, so visiting the page makes no third-party requests.
 
 ### Removed
 
