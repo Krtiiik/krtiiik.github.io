@@ -15,3 +15,8 @@ plugins:
 exclude:
   - Gemfile
   - Gemfile.lock
+  - README.md
+  - CHANGELOG.md
+  - CONTEXT.md
+  - ARCHITECTURE.md
+  - CONVENTIONS.md
