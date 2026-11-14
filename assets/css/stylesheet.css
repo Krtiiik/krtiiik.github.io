@@ -294,7 +294,7 @@ html:not(.js) .controls {
     flex-direction: column;
 }
 
-/* A panel pokes in from the left screen edge: no left border or rounding, text stays on the content column. */
+/* On narrower screens a panel pokes in from the left screen edge: no left border or rounding, text stays on the content column. */
 .panel {
     max-width: calc(100% + var(--edge));
     margin-left: calc(-1 * var(--edge));
@@ -305,6 +305,18 @@ html:not(.js) .controls {
     background: var(--scrim);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
+}
+
+/* Once the content column sits well clear of the screen edge (1168px = --content + 2 * --gutter),
+   poking in from the edge would leave a long empty strip: the panel becomes a box on the content column. */
+@media (min-width: 1168px) {
+    .panel {
+        max-width: 100%;
+        margin-left: 0;
+        padding-left: clamp(20px, 3.5vw, 44px);
+        border-left: 1px solid var(--line);
+        border-radius: 28px;
+    }
 }
 
 .hero {

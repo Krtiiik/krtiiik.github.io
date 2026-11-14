@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - New look: orange, cyan and blue on navy-black or warm paper, with Unbounded, Inter Tight and DM Mono type.
 - Fonts are served from this site instead of Google Fonts, so visiting the page makes no third-party requests.
+- On wide screens the intro panel is a rounded box in line with the cards instead of stretching from the left screen edge; narrower screens keep the edge-to-edge look.
 
 ### Removed
 
