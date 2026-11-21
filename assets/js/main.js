@@ -50,6 +50,8 @@
         var BPM = 174;
         var TAU = Math.PI * 2;
         var SWOOP_SECONDS = 0.95;
+        // Scene parts size from the height, capped so a very tall window spreads the scene out instead of blowing it up.
+        var SCENE_MAX_H = 1000;
         var SCENES = [
             { name: 'DJ hardware', caption: 'deck A · 33⅓ rpm · 174 bpm', draw: drawDJ },
             { name: 'math', caption: 'f(x) = Σ sin((2k−1)x) / (2k−1)', draw: drawMath },
@@ -193,7 +195,7 @@
 
         /* ---------- scene A: DJ hardware ---------- */
         function drawDJ(w, h, dt, scroll) {
-            var k = alpha(), m = mouse;
+            var k = alpha(), m = mouse, hs = Math.min(h, SCENE_MAX_H);
             var s = sims[0] || (sims[0] = { t: 0, rot: 0, vel: 0, pmx: m.x, meters: new Array(28).fill(0.3), peaks: new Array(28).fill(0.3) });
             s.t += dt;
             // scratch: horizontal pointer movement nudges the platters
@@ -209,10 +211,10 @@
             // phone portrait: deck B large in the top-right corner, deck A bottom-left, meters between.
             var R, cx, cy, R2, cx2, cy2;
             if (wide) {
-                R = Math.min(h * 0.36, w * 0.26); cx = w - R * 0.55; cy = h * 0.42;
+                R = Math.min(hs * 0.36, w * 0.26); cx = w - R * 0.55; cy = h * 0.42;
                 R2 = R * 0.7; cx2 = R2 * 0.3; cy2 = h - R2 * 0.25;
             } else {
-                R = Math.min(w * 0.46, h * 0.3); cx = w - R * 0.35; cy = h * 0.2;
+                R = Math.min(w * 0.46, hs * 0.3); cx = w - R * 0.35; cy = h * 0.2;
                 R2 = R * 0.8; cx2 = R2 * 0.25; cy2 = h - R2 * 0.2;
             }
             var xr = cx - R * 1.11, deckAEdge = cx2 + R2 * 1.11;
@@ -222,7 +224,7 @@
             if (wide) {
                 ctx.lineWidth = 1;
                 // pitch fader beside deck B
-                var fx = Math.round(xr - 34) + 0.5, fy0 = h * 0.14, fy1 = h * 0.7;
+                var fx = Math.round(xr - 34) + 0.5, fy0 = cy - hs * 0.28, fy1 = cy + hs * 0.28;
                 ctx.strokeStyle = rgba(c.fg, 0.16 * k);
                 ctx.beginPath(); ctx.moveTo(fx, fy0); ctx.lineTo(fx, fy1);
                 for (var i = 0; i <= 16; i++) { var ty = Math.round(fy0 + (fy1 - fy0) * i / 16) + 0.5; ctx.moveTo(fx - (i % 4 === 0 ? 12 : 7), ty); ctx.lineTo(fx - 4, ty); }
@@ -233,7 +235,7 @@
                 ctx.strokeStyle = rgba(c.hi, 0.75 * k); ctx.beginPath(); ctx.moveTo(fx - 12, capY); ctx.lineTo(fx + 12, capY); ctx.stroke();
 
                 // mixer: two channels of hi / mid / low EQ knobs
-                var g = 60, mxR = fx - 62, mxL = mxR - g, ky0 = h * 0.16;
+                var g = 60, mxR = fx - 62, mxL = mxR - g, ky0 = cy - hs * 0.26;
                 for (var ch = 0; ch < 2; ch++) {
                     for (var row = 0; row < 3; row++) {
                         var n = ch * 3 + row;
@@ -262,7 +264,7 @@
 
             // spectrum between the decks, kick on the low bins
             var mx0 = deckAEdge + (wide ? 28 : 14), mxEnd = wide ? xr - 70 : w - 16;
-            var N = s.meters.length, bw = Math.max(0, (mxEnd - mx0) / N), baseY = h - 26, maxH = Math.min(120, h * 0.14), seg = 6;
+            var N = s.meters.length, bw = Math.max(0, (mxEnd - mx0) / N), baseY = h - 26, maxH = Math.min(120, hs * 0.14), seg = 6;
             for (var b = 0; b < N && bw >= 4; b++) {
                 var low = 1 - b / N;
                 var target = 0.3 + 0.22 * Math.sin(s.t * 1.3 + b * 0.6) * Math.sin(s.t * 0.47 + b * 0.21) + kick * 0.45 * low * low + (0.5 - m.y) * 0.15;
@@ -331,7 +333,7 @@
 
         /* ---------- scene B: math / code ---------- */
         function drawMath(w, h, dt, scroll) {
-            var k = alpha(), m = mouse, wide = w >= 760;
+            var k = alpha(), m = mouse, wide = w >= 760, hs = Math.min(h, SCENE_MAX_H);
             var s = sims[1];
             if (!s) {
                 var parts = [];
@@ -368,9 +370,9 @@
             // plotted functions; the pointer pulls a gaussian bump into them
             var mx = m.x * w, bump = (m.y * h - oy) * 0.35;
             var curves = [
-                { col: c.hi, A: h * 0.12, f: function (x) { return Math.sin(x + t * 0.6 + ph) * Math.cos(x * 0.37 - t * 0.23); } },
-                { col: c.fg, A: h * 0.08, f: function (x) { var v = 0; for (var n = 1; n <= 7; n += 2) v += Math.sin(n * (x * 0.8 - t * 0.4 - ph)) / n; return v * 1.1; } },
-                { col: c.muted, A: h * 0.1, f: function (x) { return Math.sin(x * 2.1 + t * 0.9) * Math.exp(-0.03 * Math.pow(x - 12 - Math.sin(t * 0.2) * 6, 2)); } }
+                { col: c.hi, A: hs * 0.12, f: function (x) { return Math.sin(x + t * 0.6 + ph) * Math.cos(x * 0.37 - t * 0.23); } },
+                { col: c.fg, A: hs * 0.08, f: function (x) { var v = 0; for (var n = 1; n <= 7; n += 2) v += Math.sin(n * (x * 0.8 - t * 0.4 - ph)) / n; return v * 1.1; } },
+                { col: c.muted, A: hs * 0.1, f: function (x) { return Math.sin(x * 2.1 + t * 0.9) * Math.exp(-0.03 * Math.pow(x - 12 - Math.sin(t * 0.2) * 6, 2)); } }
             ];
             curves.forEach(function (cv, ci) {
                 ctx.strokeStyle = rgba(cv.col, 0.5 * k); ctx.lineWidth = 1.6;
@@ -385,7 +387,7 @@
 
             // Fourier epicycles drawing a square wave
             var ex = wide ? w * 0.74 : w * 0.6, ey = wide ? h * 0.26 : h * 0.16;
-            var R = Math.min(w, h) * (wide ? 0.085 : 0.11), ang = t * 0.8 + ph * 2;
+            var R = Math.min(w, hs) * (wide ? 0.085 : 0.11), ang = t * 0.8 + ph * 2;
             var x = ex, y = ey;
             ctx.lineWidth = 1;
             for (var n = 1; n <= 9; n += 2) {
@@ -440,14 +442,14 @@
             ctx.stroke();
         }
         function drawScope(w, h, dt, scroll) {
-            var k = alpha(), m = mouse, wide = w >= 760;
+            var k = alpha(), m = mouse, wide = w >= 760, hs = Math.min(h, SCENE_MAX_H);
             var s = sims[2] || (sims[2] = { t: 0 });
             s.t += dt;
             var t = s.t, ph = scroll * 0.0015;
             clear(w, h);
 
             // graticule centred on the scope
-            var div = Math.round(Math.min(w, h) / 7);
+            var div = Math.round(Math.min(w, hs) / 7);
             var cx = Math.round(wide ? w * 0.68 : w * 0.5), cy = Math.round(wide ? h * 0.42 : h * 0.3);
             ctx.lineWidth = 1; ctx.strokeStyle = rgba(c.fg, 0.055 * k);
             ctx.beginPath();
@@ -476,7 +478,7 @@
             ctx.shadowBlur = 0;
 
             // time-domain traces along the bottom
-            var amp = h * 0.035 * (0.6 + (1 - m.y) * 0.8), y1 = h * 0.8, y2 = h * 0.9;
+            var amp = hs * 0.035 * (0.6 + (1 - m.y) * 0.8), y1 = h * 0.8, y2 = h * 0.9;
             ctx.lineWidth = 1.5;
             if (dark) { ctx.shadowBlur = 8; ctx.shadowColor = c.hi; }
             ctx.strokeStyle = rgba(c.hi, 0.5 * k);

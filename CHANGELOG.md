@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - New look: one framed column of thin lines on near-neutral grey, with square edges, one orange highlight, and Inter Tight and DM Mono type. The intro is a box that comes in from the left edge of the column, with the background scene open above, below and beside it; the cards sit in tiles that share their borders.
-- The background scenes are drawn in the page ink with orange for the main subject, instead of orange, cyan and blue.
+- The background scenes are drawn in the page ink with orange for the main subject, instead of orange, cyan and blue. On very tall screens the scenes keep their normal size and spread out instead of growing.
 - The résumé button and the GitHub and LinkedIn links are now square buttons in one row that invert on hover.
 - Fonts are served from this site instead of Google Fonts, so visiting the page makes no third-party requests.
 
