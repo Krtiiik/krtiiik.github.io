@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Page description and Open Graph tags, so shared links get a proper title and summary.
 - Favicon: the orange scene switch dot, matching the light or dark system theme.
 - Custom "not found" page in the site style, with a link back home.
+- Card for Trading, my learning site about trading.
 
 ### Changed
 

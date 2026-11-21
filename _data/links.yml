@@ -10,6 +10,10 @@ cards:
     title: Songbook
     text: "Collections of songs I like to play"
     url: https://krtiiik.github.io/songbook
+  - kicker: 03 / trading
+    title: Trading
+    text: "My notes and lessons from learning to trade"
+    url: https://krtiiik.github.io/trading-learning/
 
 # Hero icon row: profiles elsewhere. `icon` names a file in _includes/icons/.
 socials:
