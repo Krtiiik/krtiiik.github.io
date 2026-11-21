@@ -308,23 +308,30 @@ html:not(.js) .controls {
     flex-direction: column;
 }
 
-/* Hero: copy | window onto the scene */
+/* Hero: the whole row is a window onto the scene; the copy is a side overlay
+   that comes in from the frame's left rule, with the scene open above, below and beside it. */
 
 .hero {
+    position: relative;
     flex: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    min-height: min(640px, 70vh);
+    display: flex;
+    align-items: center;
+    min-height: min(720px, 78vh);
+    padding: clamp(56px, 11vh, 120px) 0;
     border-bottom: 1px solid var(--line);
 }
 
+/* No left border: the frame's rule is its left edge. */
 .hero-copy {
+    position: relative;
+    z-index: 1;
+    width: min(680px, 100% - 32px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 22px;
-    padding: 56px var(--gutter) 44px;
-    border-right: 1px solid var(--line);
+    padding: 44px clamp(var(--gutter), 4vw, 44px) 40px var(--gutter);
+    border: 1px solid var(--line);
+    border-left: 0;
 }
 
 .hero-title {
@@ -353,10 +360,11 @@ html:not(.js) .controls {
     margin-top: 8px;
 }
 
-/* The window: an empty cell where the scene shows clearly, marked by crop marks. */
+/* The window: crop marks at the corners of the hero row, where the scene shows clearly. */
 .hero-window {
-    position: relative;
-    min-height: 220px;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 .hero-window::before,
@@ -587,23 +595,6 @@ html:not(.js) .controls {
     padding: 18px var(--gutter) max(18px, env(safe-area-inset-bottom, 0px));
 }
 
-/* Split rows stack below 960px; the vertical rule becomes a horizontal one. */
-@media (max-width: 960px) {
-    .hero {
-        grid-template-columns: minmax(0, 1fr);
-        min-height: 0;
-    }
-
-    .hero-copy {
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-    }
-
-    .hero-window {
-        min-height: clamp(180px, 38vw, 300px);
-    }
-}
-
 /* Phone */
 
 @media (max-width: 560px) {
@@ -611,8 +602,13 @@ html:not(.js) .controls {
         --gutter: 16px;
     }
 
+    .hero {
+        min-height: 0;
+        padding: 72px 0 140px;
+    }
+
     .hero-copy {
-        padding: 36px var(--gutter) 32px;
+        padding: 32px 20px 28px var(--gutter);
     }
 
     .card {
