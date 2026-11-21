@@ -6,12 +6,10 @@ cards:
     title: Resume
     text: "My background, skills, and accomplishments"
     url: https://krtiiik.github.io/resume/
-    accent: a1
   - kicker: 02 / songbook
     title: Songbook
     text: "Collections of songs I like to play"
     url: https://krtiiik.github.io/songbook
-    accent: a2
 
 # Hero icon row: profiles elsewhere. `icon` names a file in _includes/icons/.
 socials:

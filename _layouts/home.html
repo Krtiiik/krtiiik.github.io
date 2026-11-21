@@ -3,16 +3,14 @@ layout: default
 ---
 
 <section class="hero">
-    <div class="panel hero-panel">
+    <div class="hero-copy veil">
         <h1 class="hero-title">Krtiiik</h1>
         <p class="hero-intro">{{ page.intro }}</p>
         {% assign socials = site.data.links.socials %}
         {% if page.cta or socials %}
         <div class="hero-actions">
             {% if page.cta %}
-            <a class="btn btn-primary" href="{{ page.cta.url | relative_url }}">{{ page.cta.title }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
+            <a class="btn" href="{{ page.cta.url | relative_url }}">{{ page.cta.title }} <span aria-hidden="true">→</span></a>
             {% endif %}
             {% if socials %}
             <ul class="socials" aria-label="Elsewhere">
@@ -24,20 +22,32 @@ layout: default
         </div>
         {% endif %}
     </div>
+    <div class="hero-window" aria-hidden="true"></div>
 </section>
 
 {% assign cards = site.data.links.cards %}
 {% if cards %}
-<section class="cards" aria-label="Pages">
-    {% for card in cards %}
-    <a class="card" href="{{ card.url | relative_url }}" style="--accent: var(--{{ card.accent | default: 'a1' }})">
-        <span class="card-kicker">{{ card.kicker }}</span>
-        <span class="card-body">
-            <strong class="card-title">{{ card.title }}</strong>
-            <span class="card-text">{{ card.text }}</span>
-        </span>
-    </a>
-    {% endfor %}
+<section class="cards" aria-labelledby="cards-title">
+    <div class="cards-head veil">
+        <h2 class="label" id="cards-title">Pages</h2>
+        <span class="label">{{ cards.size | prepend: '0' | slice: -2, 2 }}</span>
+    </div>
+    <div class="cards-clip">
+    <ul class="cards-list">
+        {% for card in cards %}
+        <li>
+            <a class="card" href="{{ card.url | relative_url }}">
+                <span class="card-kicker label">{{ card.kicker }}</span>
+                <span class="card-body">
+                    <strong class="card-title">{{ card.title }}</strong>
+                    <span class="card-text">{{ card.text }}</span>
+                </span>
+                <span class="card-arrow" aria-hidden="true">→</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
 </section>
 {% endif %}
 

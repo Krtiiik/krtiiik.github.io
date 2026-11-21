@@ -2,9 +2,14 @@
 layout: default
 ---
 
-<article class="panel page">
-    <h1 class="page-title">{{ page.title }}</h1>
-    <div class="prose">
-        {{ content }}
+<article class="page">
+    <header class="page-head veil">
+        {% if page.kicker %}<p class="label">{{ page.kicker }}</p>{% endif %}
+        <h1 class="page-title">{{ page.title }}</h1>
+    </header>
+    <div class="prose-row veil">
+        <div class="prose">
+            {{ content }}
+        </div>
     </div>
 </article>

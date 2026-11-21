@@ -75,7 +75,7 @@
 
         function readColors() {
             var cs = getComputedStyle(root);
-            ['bg', 'fg', 'muted', 'a1', 'a2', 'a3'].forEach(function (k) { c[k] = cs.getPropertyValue('--' + k).trim(); });
+            ['bg', 'fg', 'muted', 'hi'].forEach(function (k) { c[k] = toHex(cs.getPropertyValue('--' + k).trim()); });
             dark = root.getAttribute('data-theme') === 'dark';
             dirty = true;
         }
@@ -99,7 +99,7 @@
             dirty = true;
         }
 
-        // Swoop: the next scene is revealed by a circle growing out of the orange dot.
+        // Swoop: the next scene is revealed by a circle growing out of the scene switch.
         function nextScene() {
             var r = dot ? dot.getBoundingClientRect() : null;
             origin = r ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : { x: 40, y: 48 };
@@ -158,18 +158,29 @@
                 circle(origin.x, origin.y, r); ctx.clip();
                 SCENES[cur].draw(w, h, dt, scroll);
                 ctx.restore();
-                // the swoop's leading edge: three trailing rings in the accents
-                if (dark) { ctx.shadowBlur = 18; ctx.shadowColor = c.a1; }
-                ctx.lineWidth = 2.5; ctx.strokeStyle = rgba(c.a1, 0.85 * fade); circle(origin.x, origin.y, r); ctx.stroke();
+                // the swoop's leading edge: three trailing rings: highlight, ink, muted ink
+                if (dark) { ctx.shadowBlur = 18; ctx.shadowColor = c.hi; }
+                ctx.lineWidth = 2.5; ctx.strokeStyle = rgba(c.hi, 0.85 * fade); circle(origin.x, origin.y, r); ctx.stroke();
                 ctx.shadowBlur = 0;
-                ctx.lineWidth = 1.5; ctx.strokeStyle = rgba(c.a2, 0.55 * fade); circle(origin.x, origin.y, r * 0.93); ctx.stroke();
-                ctx.lineWidth = 1; ctx.strokeStyle = rgba(c.a3, 0.4 * fade); circle(origin.x, origin.y, r * 0.86); ctx.stroke();
+                ctx.lineWidth = 1.5; ctx.strokeStyle = rgba(c.fg, 0.55 * fade); circle(origin.x, origin.y, r * 0.93); ctx.stroke();
+                ctx.lineWidth = 1; ctx.strokeStyle = rgba(c.muted, 0.4 * fade); circle(origin.x, origin.y, r * 0.86); ctx.stroke();
             } else {
                 SCENES[cur].draw(w, h, dt, scroll);
             }
         }
 
         /* ---------- helpers ---------- */
+        // The tokens are OKLCH; paint one pixel to get plain sRGB hex for rgba().
+        var probe = null;
+        function toHex(color) {
+            probe = probe || document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+            probe.clearRect(0, 0, 1, 1);
+            probe.fillStyle = '#000';
+            probe.fillStyle = color;
+            probe.fillRect(0, 0, 1, 1);
+            var d = probe.getImageData(0, 0, 1, 1).data;
+            return '#' + ((1 << 24) | (d[0] << 16) | (d[1] << 8) | d[2]).toString(16).slice(1);
+        }
         function rgba(hex, a) {
             var n = parseInt(hex.slice(1), 16);
             return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
@@ -219,7 +230,7 @@
                 var capY = fy0 + (fy1 - fy0) * clamp(0.5 + 0.18 * Math.sin(s.t * 0.21) + (m.y - 0.5) * 0.25 + Math.sin(ph) * 0.05);
                 ctx.fillStyle = rgba(c.fg, 0.07 * k); ctx.fillRect(fx - 12, capY - 7, 24, 14);
                 ctx.strokeStyle = rgba(c.fg, 0.3 * k); ctx.strokeRect(fx - 12, capY - 7, 24, 14);
-                ctx.strokeStyle = rgba(c.a1, 0.75 * k); ctx.beginPath(); ctx.moveTo(fx - 12, capY); ctx.lineTo(fx + 12, capY); ctx.stroke();
+                ctx.strokeStyle = rgba(c.hi, 0.75 * k); ctx.beginPath(); ctx.moveTo(fx - 12, capY); ctx.lineTo(fx + 12, capY); ctx.stroke();
 
                 // mixer: two channels of hi / mid / low EQ knobs
                 var g = 60, mxR = fx - 62, mxL = mxR - g, ky0 = h * 0.16;
@@ -227,7 +238,7 @@
                     for (var row = 0; row < 3; row++) {
                         var n = ch * 3 + row;
                         var v = clamp(0.5 + 0.28 * Math.sin(s.t * (0.3 + n * 0.07) + n * 1.7) + (m.x - 0.5) * 0.45 * (ch ? 1 : -1));
-                        knob(ch ? mxR : mxL, ky0 + row * g, 13, v, row === 0 ? c.a1 : row === 1 ? c.a3 : c.a2, k);
+                        knob(ch ? mxR : mxL, ky0 + row * g, 13, v, row === 0 ? c.hi : row === 1 ? c.muted : c.fg, k);
                     }
                 }
                 // performance pads, one lights per beat
@@ -235,7 +246,7 @@
                 for (var pr = 0; pr < 2; pr++) {
                     for (var q = 0; q < 4; q++) {
                         var idx = pr * 4 + q, on = idx === beatN % 8, x = px0 + q * (ps + pg), y = py0 + pr * (ps + pg);
-                        ctx.fillStyle = on ? rgba(idx % 2 ? c.a2 : c.a1, (0.15 + 0.4 * kick) * k) : rgba(c.fg, 0.035 * k);
+                        ctx.fillStyle = on ? rgba(idx % 2 ? c.fg : c.hi, (0.15 + 0.4 * kick) * k) : rgba(c.fg, 0.035 * k);
                         ctx.fillRect(x, y, ps, ps);
                         ctx.strokeStyle = rgba(c.fg, 0.16 * k); ctx.strokeRect(x, y, ps, ps);
                     }
@@ -246,7 +257,7 @@
                 ctx.beginPath(); ctx.moveTo(cf0, cfy); ctx.lineTo(cf1, cfy); ctx.moveTo((cf0 + cf1) / 2, cfy - 8); ctx.lineTo((cf0 + cf1) / 2, cfy + 8); ctx.stroke();
                 ctx.fillStyle = rgba(c.fg, 0.07 * k); ctx.fillRect(capX - 7, cfy - 11, 14, 22);
                 ctx.strokeStyle = rgba(c.fg, 0.3 * k); ctx.strokeRect(capX - 7, cfy - 11, 14, 22);
-                ctx.strokeStyle = rgba(c.a2, 0.75 * k); ctx.beginPath(); ctx.moveTo(capX, cfy - 11); ctx.lineTo(capX, cfy + 11); ctx.stroke();
+                ctx.strokeStyle = rgba(c.fg, 0.75 * k); ctx.beginPath(); ctx.moveTo(capX, cfy - 11); ctx.lineTo(capX, cfy + 11); ctx.stroke();
             }
 
             // spectrum between the decks, kick on the low bins
@@ -261,10 +272,10 @@
                 var segs = Math.floor(s.meters[b] * maxH / seg), bx = mx0 + b * bw;
                 for (var j = 0; j < segs; j++) {
                     var fr = (j * seg) / maxH;
-                    ctx.fillStyle = rgba(fr > 0.78 ? c.a1 : fr > 0.5 ? c.a3 : c.a2, 0.3 * k);
+                    ctx.fillStyle = rgba(fr > 0.78 ? c.hi : fr > 0.5 ? c.muted : c.fg, 0.3 * k);
                     ctx.fillRect(bx + 1, baseY - j * seg - 4, bw - 3, 4);
                 }
-                ctx.fillStyle = rgba(c.a1, 0.55 * k);
+                ctx.fillStyle = rgba(c.hi, 0.55 * k);
                 ctx.fillRect(bx + 1, baseY - s.peaks[b] * maxH - 2, bw - 3, 2);
             }
         }
@@ -284,23 +295,22 @@
             for (var gr = 0.36; gr < 0.9; gr += 0.034) { circle(0, 0, r * gr); ctx.strokeStyle = rgba(c.fg, 0.045 * k); ctx.stroke(); }
             // fixed light reflections on the vinyl
             ctx.lineWidth = r * 0.06;
-            ctx.strokeStyle = rgba(c.a2, 0.05 * k);
+            ctx.strokeStyle = rgba(c.fg, 0.05 * k);
             ctx.beginPath(); ctx.arc(0, 0, r * 0.62, -2.4, -1.75); ctx.stroke();
             ctx.beginPath(); ctx.arc(0, 0, r * 0.62, 0.74, 1.39); ctx.stroke();
             ctx.lineWidth = 1;
             ctx.rotate(rot);
             for (var d = 0; d < 96; d++) {
                 var da = (d / 96) * TAU;
-                ctx.fillStyle = d % 8 === 0 ? rgba(c.a1, 0.55 * k) : rgba(c.fg, 0.15 * k);
+                ctx.fillStyle = d % 8 === 0 ? rgba(c.hi, 0.55 * k) : rgba(c.fg, 0.15 * k);
                 ctx.fillRect(Math.cos(da) * r * 0.95 - 1.5, Math.sin(da) * r * 0.95 - 1.5, 3, 3);
             }
-            circle(0, 0, r * 0.3); ctx.fillStyle = rgba(c.a1, 0.06 * k); ctx.fill(); ctx.strokeStyle = rgba(c.a1, 0.35 * k); ctx.stroke();
-            circle(0, 0, r * 0.22); ctx.strokeStyle = rgba(c.a1, 0.15 * k); ctx.stroke();
-            ctx.lineWidth = 2; ctx.strokeStyle = rgba(c.a1, 0.6 * k);
+            circle(0, 0, r * 0.3); ctx.fillStyle = rgba(c.hi, 0.06 * k); ctx.fill(); ctx.strokeStyle = rgba(c.hi, 0.35 * k); ctx.stroke();
+            circle(0, 0, r * 0.22); ctx.strokeStyle = rgba(c.hi, 0.15 * k); ctx.stroke();
+            ctx.lineWidth = 2; ctx.strokeStyle = rgba(c.hi, 0.6 * k);
             ctx.beginPath(); ctx.moveTo(r * 0.08, 0); ctx.lineTo(r * 0.28, 0); ctx.stroke();
-            // cue marker, glowing on dark
-            if (dark) { ctx.shadowBlur = 16; ctx.shadowColor = c.a2; }
-            ctx.lineWidth = 3; ctx.strokeStyle = rgba(c.a2, 0.85 * k);
+            // cue marker
+            ctx.lineWidth = 3; ctx.strokeStyle = rgba(c.fg, 0.85 * k);
             ctx.beginPath(); ctx.moveTo(r * 0.86, 0); ctx.lineTo(r * 1.0, 0); ctx.stroke();
             ctx.shadowBlur = 0;
             circle(0, 0, Math.max(2, r * 0.018)); ctx.fillStyle = rgba(c.fg, 0.4 * k); ctx.fill();
@@ -358,13 +368,11 @@
             // plotted functions; the pointer pulls a gaussian bump into them
             var mx = m.x * w, bump = (m.y * h - oy) * 0.35;
             var curves = [
-                { col: c.a1, A: h * 0.12, f: function (x) { return Math.sin(x + t * 0.6 + ph) * Math.cos(x * 0.37 - t * 0.23); } },
-                { col: c.a2, A: h * 0.08, f: function (x) { var v = 0; for (var n = 1; n <= 7; n += 2) v += Math.sin(n * (x * 0.8 - t * 0.4 - ph)) / n; return v * 1.1; } },
-                { col: c.a3, A: h * 0.1, f: function (x) { return Math.sin(x * 2.1 + t * 0.9) * Math.exp(-0.03 * Math.pow(x - 12 - Math.sin(t * 0.2) * 6, 2)); } }
+                { col: c.hi, A: h * 0.12, f: function (x) { return Math.sin(x + t * 0.6 + ph) * Math.cos(x * 0.37 - t * 0.23); } },
+                { col: c.fg, A: h * 0.08, f: function (x) { var v = 0; for (var n = 1; n <= 7; n += 2) v += Math.sin(n * (x * 0.8 - t * 0.4 - ph)) / n; return v * 1.1; } },
+                { col: c.muted, A: h * 0.1, f: function (x) { return Math.sin(x * 2.1 + t * 0.9) * Math.exp(-0.03 * Math.pow(x - 12 - Math.sin(t * 0.2) * 6, 2)); } }
             ];
-            if (dark) ctx.shadowBlur = 8;
             curves.forEach(function (cv, ci) {
-                ctx.shadowColor = cv.col;
                 ctx.strokeStyle = rgba(cv.col, 0.5 * k); ctx.lineWidth = 1.6;
                 ctx.beginPath();
                 for (var px = 0; px <= w; px += 4) {
@@ -384,7 +392,7 @@
                 var r = R * 4 / (n * Math.PI);
                 circle(x, y, r); ctx.strokeStyle = rgba(c.fg, 0.12 * k); ctx.stroke();
                 var nx = x + r * Math.cos(n * ang), ny = y + r * Math.sin(n * ang);
-                ctx.strokeStyle = rgba(c.a2, 0.5 * k);
+                ctx.strokeStyle = rgba(c.fg, 0.5 * k);
                 ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(nx, ny); ctx.stroke();
                 x = nx; y = ny;
             }
@@ -393,12 +401,12 @@
             if (s.trace.length) {
                 ctx.strokeStyle = rgba(c.fg, 0.15 * k);
                 ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(tx0, s.trace[0]); ctx.stroke();
-                ctx.strokeStyle = rgba(c.a1, 0.55 * k); ctx.lineWidth = 1.5;
+                ctx.strokeStyle = rgba(c.hi, 0.55 * k); ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 s.trace.forEach(function (trY, i) { if (i === 0) ctx.moveTo(tx0, trY); else ctx.lineTo(tx0 + i * 1.5, trY); });
                 ctx.stroke();
             }
-            circle(x, y, 3); ctx.fillStyle = rgba(c.a1, 0.9 * k); ctx.fill();
+            circle(x, y, 3); ctx.fillStyle = rgba(c.hi, 0.9 * k); ctx.fill();
 
             // floating numbers and symbols, nudged away by the pointer
             var my = m.y * h, scrollShift = scroll * 0.08;
@@ -410,7 +418,7 @@
                 if (p.y < -30) { p.y = h + 20; p.x = Math.random() * w; }
                 if (p.x < -60) p.x = w + 40;
                 if (p.x > w + 60) p.x = -40;
-                var col = p.tone === 1 ? c.a1 : p.tone === 2 ? c.a2 : c.fg;
+                var col = p.tone === 1 ? c.hi : p.tone === 2 ? c.fg : c.fg;
                 var yy = (p.y - scrollShift) % (h + 50); if (yy < -30) yy += h + 50;
                 ctx.font = p.size + 'px ' + MONO;
                 ctx.fillStyle = rgba(col, p.a * k * (p.tone ? 1.6 : 1));
@@ -457,30 +465,29 @@
             var R = wide ? div * 2.3 : Math.min(div * 2.3, w * 0.4);
             var Ry = R * (0.8 + (1 - m.y) * 0.3), a = 3, b = 2;
             var delta = t * 0.35 + ph + (m.x - 0.5) * 1.4;
-            ctx.lineWidth = 1.2; ctx.strokeStyle = rgba(c.a1, 0.22 * k);
+            ctx.lineWidth = 1.2; ctx.strokeStyle = rgba(c.fg, 0.2 * k);
             lissajous(cx, cy, R, Ry, a, b, delta - 0.22);
-            if (dark) { ctx.shadowBlur = 16; ctx.shadowColor = c.a2; }
-            ctx.lineWidth = 1.6; ctx.strokeStyle = rgba(c.a2, 0.6 * k);
+            ctx.lineWidth = 1.6; ctx.strokeStyle = rgba(c.hi, 0.7 * k);
             lissajous(cx, cy, R, Ry, a, b, delta);
             // beam spot
             var u = (t * 1.6) % TAU;
             circle(cx + R * Math.sin(a * u + delta), cy + Ry * Math.sin(b * u), 3.5);
-            ctx.fillStyle = dark ? 'rgba(255,255,255,0.9)' : rgba(c.a2, 0.9 * k); ctx.fill();
+            ctx.fillStyle = dark ? rgba(c.fg, 0.9) : rgba(c.fg, 0.9 * k); ctx.fill();
             ctx.shadowBlur = 0;
 
             // time-domain traces along the bottom
             var amp = h * 0.035 * (0.6 + (1 - m.y) * 0.8), y1 = h * 0.8, y2 = h * 0.9;
             ctx.lineWidth = 1.5;
-            if (dark) { ctx.shadowBlur = 8; ctx.shadowColor = c.a1; }
-            ctx.strokeStyle = rgba(c.a1, 0.5 * k);
+            if (dark) { ctx.shadowBlur = 8; ctx.shadowColor = c.hi; }
+            ctx.strokeStyle = rgba(c.hi, 0.5 * k);
             ctx.beginPath();
             for (var px = 0; px <= w; px += 3) {
                 var ya = y1 + amp * Math.sin(px * 0.012 - t * 1.2 - ph * 3) + amp * 0.3 * Math.sin(px * 0.031 + t * 0.7);
                 if (px === 0) ctx.moveTo(px, ya); else ctx.lineTo(px, ya);
             }
             ctx.stroke();
-            if (dark) ctx.shadowColor = c.a3;
-            ctx.strokeStyle = rgba(c.a3, 0.5 * k);
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = rgba(c.muted, 0.5 * k);
             ctx.beginPath();
             for (var qx = 0; qx <= w; qx += 3) {
                 var v = 0;
@@ -497,8 +504,8 @@
             ctx.font = '11px ' + MONO; ctx.fillStyle = rgba(c.fg, 0.34 * k);
             var lx = cx - R;
             labels.forEach(function (l) { ctx.fillText(l, lx, cy + Ry + 34); lx += ctx.measureText(l).width + 26; });
-            ctx.fillStyle = rgba(c.a1, 0.5 * k); ctx.fillText('CH1', 16, y1 - amp - 10);
-            ctx.fillStyle = rgba(c.a3, 0.6 * k); ctx.fillText('CH2', 16, y2 - amp - 6);
+            ctx.fillStyle = rgba(c.hi, 0.5 * k); ctx.fillText('CH1', 16, y1 - amp - 10);
+            ctx.fillStyle = rgba(c.muted, 0.6 * k); ctx.fillText('CH2', 16, y2 - amp - 6);
         }
     }
 })();

@@ -13,14 +13,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Pause button for the background; the choice is remembered.
 - GitHub and LinkedIn icon links next to the résumé button.
 - Page description and Open Graph tags, so shared links get a proper title and summary.
-- Favicon: the orange scene dot, matching the light or dark system theme.
+- Favicon: the orange scene switch dot, matching the light or dark system theme.
 - Custom "not found" page in the site style, with a link back home.
 
 ### Changed
 
-- New look: orange, cyan and blue on navy-black or warm paper, with Unbounded, Inter Tight and DM Mono type.
+- New look: one framed column of thin lines on near-neutral grey, with square edges, one orange highlight, and Inter Tight and DM Mono type. The intro and the cards sit in tiles that share their borders; an empty, crop-marked window beside the intro shows the background scene clearly, also on phones.
+- The background scenes are drawn in the page ink with orange for the main subject, instead of orange, cyan and blue.
+- The résumé button and the GitHub and LinkedIn links are now square buttons in one row that invert on hover.
 - Fonts are served from this site instead of Google Fonts, so visiting the page makes no third-party requests.
-- On wide screens the intro panel is a rounded box in line with the cards instead of stretching from the left screen edge; narrower screens keep the edge-to-edge look.
 
 ### Removed
 

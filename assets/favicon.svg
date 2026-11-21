@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- The scene switch. A standalone file can't read the CSS tokens, so the a1 accent is copied here
+  <!-- The scene switch. A standalone file can't read the CSS tokens, so the hi highlight is copied here
        (no double hyphens: they are illegal inside XML comments and break the whole file). -->
   <style>
-    .dot { fill: #C2521A; }
-    @media (prefers-color-scheme: dark) { .dot { fill: #FF8A3D; } }
+    .dot { fill: #C14900; }
+    @media (prefers-color-scheme: dark) { .dot { fill: #F58B4B; } }
   </style>
   <circle class="dot" cx="16" cy="16" r="15" opacity="0.22"/>
   <circle class="dot" cx="16" cy="16" r="9"/>
