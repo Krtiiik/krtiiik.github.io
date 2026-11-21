@@ -313,11 +313,10 @@ html:not(.js) .controls {
 
 .hero {
     position: relative;
-    flex: 1;
     display: flex;
     align-items: center;
-    min-height: min(720px, 78vh);
-    padding: clamp(56px, 11vh, 120px) 0;
+    /* fixed, not viewport-relative: on tall screens a vh-based hero grew absurdly tall */
+    padding: 104px 0;
     border-bottom: 1px solid var(--line);
 }
 
